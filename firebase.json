@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "database": "ai-studio-sheikcoin-cd779c35-87e4-44ef-839d-f79c518bf93b",
+    "rules": "firestore.rules"
+  }
+}

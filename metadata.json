@@ -1,0 +1,6 @@
+{
+  "name": "Sheik coin",
+  "description": "Aplicativo mobile-first estilo PWA para assistir a anúncios, acumular moedas virtuais (Coins) e resgatar pacotes de Diamantes para Free Fire na Lojinha oficial do Sheik Coin.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

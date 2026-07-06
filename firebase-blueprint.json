@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account and coins balance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "password": { "type": "string" },
+        "pixKey": { "type": "string" },
+        "coins": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "password", "coins", "createdAt"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "Coins withdrawal request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "coins": { "type": "number" },
+        "valueBRL": { "type": "number" },
+        "status": { "type": "string", "enum": ["Pendente", "Processando", "Aprovado", "Recusado"] },
+        "pixKey": { "type": "string" }
+      },
+      "required": ["id", "userId", "date", "coins", "valueBRL", "status", "pixKey"]
+    },
+    "DiamondPurchase": {
+      "title": "DiamondPurchase",
+      "description": "Free Fire diamond purchase request in store",
+      "type": "object",
+      "properties": {
+        "id_usuario": { "type": "string" },
+        "quantidade_dimas": { "type": "number" },
+        "id_jogador_ff": { "type": "string" },
+        "coinsCost": { "type": "number" },
+        "status": { "type": "string", "enum": ["Pendente", "Aprovado", "Recusado"] },
+        "data": { "type": "string" }
+      },
+      "required": ["id_usuario", "quantidade_dimas", "id_jogador_ff", "coinsCost", "status", "data"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Registered user accounts"
+    },
+    "withdrawals/{withdrawalId}": {
+      "schema": "Withdrawal",
+      "description": "Coins withdrawal logs"
+    },
+    "Historico_Compras/{purchaseId}": {
+      "schema": "DiamondPurchase",
+      "description": "Free Fire diamond purchase history"
+    }
+  }
+}
