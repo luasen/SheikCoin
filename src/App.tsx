@@ -7,9 +7,10 @@ import Dashboard from './components/Dashboard';
 import DiamondStore from './components/DiamondStore';
 import Profile from './components/Profile';
 import AdminPanel from './components/AdminPanel';
-import { Home, ShoppingBag, User as UserIcon, Coins } from 'lucide-react';
+import { Home, ShoppingBag, User as UserIcon, Coins, Loader2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getUserById, updateUserCoins } from './lib/firebase';
+import { adService } from './services/adService';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -17,6 +18,9 @@ export default function App() {
   const [currentAdBanner, setCurrentAdBanner] = useState<AdBanner | null>(null);
   const [cooldownStates, setCooldownStates] = useState<Record<string, number>>({});
   const [isCoinsAnimating, setIsCoinsAnimating] = useState(false);
+  const [isAdTriggering, setIsAdTriggering] = useState(false);
+  const [triggeringBannerTitle, setTriggeringBannerTitle] = useState('');
+
 
   // Initialize and load session from localStorage & Firestore (Collection: 'users', Field: 'coinsApproved') on mount
   useEffect(() => {
@@ -107,16 +111,74 @@ export default function App() {
   };
 
   // Trigger when a banner ad is tapped
-  const handleAdClicked = (banner: AdBanner) => {
-    // Open full-screen simulated AdPlayer overlay
-    setCurrentAdBanner(banner);
+  const handleAdClicked = async (banner: AdBanner) => {
+    if (!currentUser || isAdTriggering) return;
+
+    setIsAdTriggering(true);
+    setTriggeringBannerTitle(banner.title);
+
+    try {
+      // 1. Immediately enforce the 30 seconds cooldown lock for this clicked banner
+      const nextCooldownExpire = Date.now() + 30 * 1000;
+      setCooldownStates((prev) => ({
+        ...prev,
+        [banner.id]: nextCooldownExpire,
+      }));
+
+      // 2. Trigger the real Adsterra SocialBar script injection
+      const result = await adService.triggerSocialBarAd(currentUser.id);
+
+      if (result && result.success) {
+        // Trigger visual coins scaling pop animation in header
+        setIsCoinsAnimating(true);
+        setTimeout(() => setIsCoinsAnimating(false), 800);
+
+        // 3. Award +10 coins as requested
+        const updatedCoins = currentUser.coins + 10;
+        const updatedUser: User = {
+          ...currentUser,
+          coins: updatedCoins,
+        };
+
+        // 4. Save to Firestore 'users' collection (updates both coinsApproved and coins)
+        await updateUserCoins(currentUser.id, updatedCoins);
+
+        // 5. Update global users database in localStorage for offline resiliency
+        const usersData = localStorage.getItem('coinad_users');
+        if (usersData) {
+          const users: User[] = JSON.parse(usersData);
+          const idx = users.findIndex((u) => u.id === currentUser.id);
+          if (idx !== -1) {
+            users[idx] = updatedUser;
+            localStorage.setItem('coinad_users', JSON.stringify(users));
+          }
+        }
+
+        // 6. Update statistics of watched ads today
+        const todayKey = `coinad_watched_today_${currentUser.id}_${new Date().toDateString()}`;
+        const totalToday = parseInt(localStorage.getItem(todayKey) || '0', 10) + 1;
+        localStorage.setItem(todayKey, String(totalToday));
+
+        // 7. Update career lifetime ads watched count
+        const careerKey = `coinad_watched_total_${currentUser.id}`;
+        const careerTotal = parseInt(localStorage.getItem(careerKey) || '0', 10) + 1;
+        localStorage.setItem(careerKey, String(careerTotal));
+
+        // 8. Update current user state
+        setCurrentUser(updatedUser);
+      }
+    } catch (err) {
+      console.error('Failed to trigger Adsterra SocialBar or reward user:', err);
+    } finally {
+      setIsAdTriggering(false);
+      setTriggeringBannerTitle('');
+    }
   };
 
-  // Award Coins when ad is viewed to completion
+  // Keep reward claimed as fallback for legacy components
   const handleRewardClaimed = async () => {
     if (!currentUser || !currentAdBanner) return;
 
-    // Trigger visual coins scaling pop animation in header
     setIsCoinsAnimating(true);
     setTimeout(() => setIsCoinsAnimating(false), 800);
 
@@ -126,14 +188,12 @@ export default function App() {
       coins: updatedCoins,
     };
 
-    // Save to Firestore
     try {
       await updateUserCoins(currentUser.id, updatedCoins);
     } catch (err) {
       console.error('Failed to update user coins in Firestore, falling back to local storage:', err);
     }
 
-    // Update global users database
     const usersData = localStorage.getItem('coinad_users');
     if (usersData) {
       const users: User[] = JSON.parse(usersData);
@@ -144,24 +204,20 @@ export default function App() {
       }
     }
 
-    // Save cooldown for this specific banner
-    const nextCooldownExpire = Date.now() + currentAdBanner.cooldownSeconds * 1000;
+    const nextCooldownExpire = Date.now() + 30 * 1000; // Force 30s as requested
     setCooldownStates((prev) => ({
       ...prev,
       [currentAdBanner.id]: nextCooldownExpire,
     }));
 
-    // Update statistics of watched ads today
     const todayKey = `coinad_watched_today_${currentUser.id}_${new Date().toDateString()}`;
     const totalToday = parseInt(localStorage.getItem(todayKey) || '0', 10) + 1;
     localStorage.setItem(todayKey, String(totalToday));
 
-    // Update career lifetime ads watched count
     const careerKey = `coinad_watched_total_${currentUser.id}`;
     const careerTotal = parseInt(localStorage.getItem(careerKey) || '0', 10) + 1;
     localStorage.setItem(careerKey, String(careerTotal));
 
-    // Persist user state changes
     setCurrentUser(updatedUser);
     setCurrentAdBanner(null);
   };
@@ -204,6 +260,54 @@ export default function App() {
                 onRewardClaimed={handleRewardClaimed}
                 onClose={handleAdPlayerClose}
               />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Adsterra Loading Overlay */}
+        <AnimatePresence>
+          {isAdTriggering && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 bg-[#0a0d14]/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center select-none"
+            >
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-red-500/20 rounded-full blur-2xl animate-pulse" />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#ff4655] to-amber-500 flex items-center justify-center p-0.5 shadow-lg shadow-[#ff4655]/20">
+                  <div className="w-full h-full rounded-2xl bg-[#0c0f14] flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-[#ff4655] animate-spin" />
+                  </div>
+                </div>
+              </div>
+
+              <span className="text-[10px] uppercase font-bold tracking-widest text-[#ff4655] bg-[#ff4655]/10 px-3 py-1 rounded-full border border-[#ff4655]/20 flex items-center gap-1.5 mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                Anúncio Premiado Ativo
+              </span>
+
+              <h3 className="font-display text-lg font-black text-white tracking-tight px-4 leading-tight mb-1">
+                Iniciando SocialBar...
+              </h3>
+              <p className="text-xs text-slate-400 max-w-[240px] leading-relaxed">
+                Interaja com o banner oficial <span className="text-[#ff4655] font-semibold">{triggeringBannerTitle || 'Patrocinado'}</span> para validar suas moedas.
+              </p>
+
+              <div className="mt-8 space-y-1.5 w-full max-w-[200px]">
+                <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 3.5, ease: 'linear' }}
+                    className="h-full bg-gradient-to-r from-[#ff4655] to-amber-500"
+                  />
+                </div>
+                <div className="flex justify-between text-[9px] text-slate-500 font-bold uppercase tracking-wider">
+                  <span>Conectando</span>
+                  <span>Adsterra Network</span>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
