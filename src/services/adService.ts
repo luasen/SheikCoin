@@ -28,6 +28,14 @@ export const adService = {
   triggerSocialBarAd(userId: string): Promise<{ success: boolean }> {
     return new Promise((resolve) => {
       console.log(`Starting Adsterra SocialBar ad flow for user: ${userId}`);
+      let resolved = false;
+
+      const safeResolve = (success: boolean) => {
+        if (!resolved) {
+          resolved = true;
+          resolve({ success });
+        }
+      };
 
       try {
         // 1. Create script tag dynamically
@@ -39,24 +47,29 @@ export const adService = {
         // 2. Set up event handlers to observe script load state
         script.onload = () => {
           console.log('Adsterra SocialBar script successfully mounted and executed.');
+          // Resolve immediately so the loading screen disappears as soon as the script loads/executes
+          safeResolve(true);
         };
 
         script.onerror = (error) => {
           console.warn('Adsterra SocialBar script was blocked or failed to load. Proceeding with fallback resolve.', error);
+          // Resolve immediately on error so the user doesn't get stuck in an infinite loading loop
+          safeResolve(true);
         };
 
         // 3. Inject script into head
         document.head.appendChild(script);
       } catch (err) {
         console.error('Error injecting Adsterra script tag:', err);
+        safeResolve(true);
       }
 
-      // 4. Simulate exposure detection and resolve after 3.5 seconds
-      // A fallback timeout ensures the user gets rewarded even if an AdBlocker is active or script loading fails.
+      // 4. Short fallback timeout of 1.2 seconds to clear the loader quickly if script.onload doesn't fire
+      // (e.g. due to adblockers, tracking protection, or immediate script evaluation)
       setTimeout(() => {
-        console.log(`SocialBar ad interaction completed successfully for user: ${userId}`);
-        resolve({ success: true });
-      }, 3500);
+        console.log(`Fallback timeout reached for SocialBar ad. Clearing loader.`);
+        safeResolve(true);
+      }, 1200);
     });
   }
 };
