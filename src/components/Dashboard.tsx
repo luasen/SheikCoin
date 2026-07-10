@@ -227,6 +227,32 @@ export default function Dashboard({ user, onAdClicked, cooldownStates }: Dashboa
           </div>
         </div>
 
+        {/* Adsterra Referral Banner */}
+        <div className="p-3 bg-gradient-to-br from-[#0d111a] to-[#121622] rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 px-4 shadow-lg select-none">
+          <div className="text-left">
+            <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+              ADSTERRA PARTNER
+            </span>
+            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-tight">
+              Apoie nosso app visitando o patrocinador oficial
+            </p>
+          </div>
+          <a 
+            href="https://effectivecpmnetwork.com" 
+            target="_blank" 
+            rel="noopener noreferrer nofollow"
+            className="hover:scale-110 active:scale-95 transition-all duration-200 shrink-0 border border-slate-800 rounded-lg p-1 bg-slate-950/60 shadow-inner flex items-center justify-center"
+          >
+            <img 
+              alt="banner" 
+              src="https://landings-cdn.adsterratech.com/referralBanners/png/80%20x%2030%20px.png" 
+              className="rounded"
+              width="80"
+              height="30"
+            />
+          </a>
+        </div>
+
         {/* Interactive action header */}
         <div className="pt-2">
           <h2 className="font-display text-base font-bold text-white flex items-center gap-1.5">
