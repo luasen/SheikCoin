@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, X, Coins, Sparkles, AlertCircle, Play, Smartphone, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { adService } from '../services/adService';
 
 interface AdPlayerProps {
   userId: string;
@@ -56,13 +55,6 @@ export default function AdPlayer({ userId, bannerTitle, onRewardClaimed, onClose
     const hash = bannerTitle.length % adGraphics.length;
     setAdGraphicIndex(hash);
   }, [bannerTitle]);
-
-  useEffect(() => {
-    // Under the hood, trigger the 5-second ad service simulation
-    adService.triggerRewardAd(userId).then((res) => {
-      console.log('Ad service validation response:', res);
-    });
-  }, [userId]);
 
   useEffect(() => {
     if (adStep !== 'playing') return;

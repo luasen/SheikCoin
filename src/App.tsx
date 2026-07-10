@@ -10,7 +10,6 @@ import AdminPanel from './components/AdminPanel';
 import { Home, ShoppingBag, User as UserIcon, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getUserById, updateUserCoins } from './lib/firebase';
-import { adService } from './services/adService';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -118,9 +117,6 @@ export default function App() {
       ...prev,
       [banner.id]: nextCooldownExpire,
     }));
-
-    // 2. Inject Adsterra SocialBar tag script in background immediately (fire-and-forget)
-    adService.triggerSocialBarAd(currentUser.id);
 
     // Trigger visual coins scaling pop animation in header
     setIsCoinsAnimating(true);

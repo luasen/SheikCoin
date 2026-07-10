@@ -98,6 +98,16 @@ export default function Dashboard({ user, onAdClicked, cooldownStates }: Dashboa
     return () => clearInterval(interval);
   }, [cooldownStates]);
 
+  // Safely trigger Google AdSense responsive ad push
+  useEffect(() => {
+    try {
+      // @ts-ignore
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.log('AdSense layout push triggered');
+    }
+  }, []);
+
   const handleBannerAction = (banner: AdBanner) => {
     // If banner is on cooldown, do nothing
     if (remainingCooldowns[banner.id]) return;
@@ -227,30 +237,30 @@ export default function Dashboard({ user, onAdClicked, cooldownStates }: Dashboa
           </div>
         </div>
 
-        {/* Adsterra Referral Banner */}
-        <div className="p-3 bg-gradient-to-br from-[#0d111a] to-[#121622] rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 px-4 shadow-lg select-none">
-          <div className="text-left">
-            <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-              ADSTERRA PARTNER
+        {/* Google AdSense Official Banner Placement */}
+        <div className="p-3 bg-gradient-to-br from-[#0d111a] to-[#121622] rounded-2xl border border-slate-800/80 flex flex-col gap-3 px-4 shadow-lg select-none">
+          <div className="w-full flex items-center justify-between">
+            <div className="text-left">
+              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                PATROCINADO PELO GOOGLE
+              </span>
+              <p className="text-[11px] text-slate-400 font-medium mt-1 leading-tight">
+                Anúncio oficial integrado via Google AdSense
+              </p>
+            </div>
+            <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-900 border border-slate-800/50 px-2 py-0.5 rounded">
+              AdSense Unit
             </span>
-            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-tight">
-              Apoie nosso app visitando o patrocinador oficial
-            </p>
           </div>
-          <a 
-            href="https://effectivecpmnetwork.com" 
-            target="_blank" 
-            rel="noopener noreferrer nofollow"
-            className="hover:scale-110 active:scale-95 transition-all duration-200 shrink-0 border border-slate-800 rounded-lg p-1 bg-slate-950/60 shadow-inner flex items-center justify-center"
-          >
-            <img 
-              alt="banner" 
-              src="https://landings-cdn.adsterratech.com/referralBanners/png/80%20x%2030%20px.png" 
-              className="rounded"
-              width="80"
-              height="30"
-            />
-          </a>
+          
+          <div className="w-full flex justify-center bg-slate-950/40 p-1.5 rounded-xl border border-slate-900/50">
+            <ins className="adsbygoogle"
+                 style={{ display: 'block', width: '100%', minHeight: '50px' }}
+                 data-ad-client="ca-pub-8355170330758219"
+                 data-ad-slot="9999999999"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+          </div>
         </div>
 
         {/* Interactive action header */}
