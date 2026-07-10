@@ -24,12 +24,21 @@ export const adService = {
   /**
    * Injects the Adsterra SocialBar tag script into the document head dynamically
    * in a fire-and-forget manner to prevent any blockages or load failures.
+   * Cleans up previous script instances of the same URL to prevent duplicates in the same session.
    */
   triggerSocialBarAd(userId: string): void {
     console.log(`Injecting Adsterra SocialBar tag in background for user: ${userId}`);
     try {
+      // Clean up previous script instances of the same URL to prevent duplicate scripts
+      const targetSrc = 'https://effectivecpmnetwork.com';
+      const existingScripts = document.querySelectorAll(`script[src="${targetSrc}"]`);
+      existingScripts.forEach((script) => {
+        script.parentNode?.removeChild(script);
+        console.log('Removed duplicate/stale Adsterra script tag.');
+      });
+
       const script = document.createElement('script');
-      script.src = 'https://effectivecpmnetwork.com';
+      script.src = targetSrc;
       script.async = true;
       script.type = 'text/javascript';
       document.head.appendChild(script);

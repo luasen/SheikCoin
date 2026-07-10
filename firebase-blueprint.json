@@ -54,7 +54,7 @@
       "schema": "Withdrawal",
       "description": "Coins withdrawal logs"
     },
-    "Historico_Compras/{purchaseId}": {
+    "transactions/{transactionId}": {
       "schema": "DiamondPurchase",
       "description": "Free Fire diamond purchase history"
     }
