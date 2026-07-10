@@ -22,55 +22,20 @@ export const adService = {
   },
 
   /**
-   * Injects the Adsterra SocialBar tag script into the document head dynamically,
-   * simulates the display and interaction, and resolves on success.
+   * Injects the Adsterra SocialBar tag script into the document head dynamically
+   * in a fire-and-forget manner to prevent any blockages or load failures.
    */
-  triggerSocialBarAd(userId: string): Promise<{ success: boolean }> {
-    return new Promise((resolve) => {
-      console.log(`Starting Adsterra SocialBar ad flow for user: ${userId}`);
-      let resolved = false;
-
-      const safeResolve = (success: boolean) => {
-        if (!resolved) {
-          resolved = true;
-          resolve({ success });
-        }
-      };
-
-      try {
-        // 1. Create script tag dynamically
-        const script = document.createElement('script');
-        script.src = 'https://effectivecpmnetwork.com';
-        script.async = true;
-        script.type = 'text/javascript';
-
-        // 2. Set up event handlers to observe script load state
-        script.onload = () => {
-          console.log('Adsterra SocialBar script successfully mounted and executed.');
-          // Resolve immediately so the loading screen disappears as soon as the script loads/executes
-          safeResolve(true);
-        };
-
-        script.onerror = (error) => {
-          console.warn('Adsterra SocialBar script was blocked or failed to load. Proceeding with fallback resolve.', error);
-          // Resolve immediately on error so the user doesn't get stuck in an infinite loading loop
-          safeResolve(true);
-        };
-
-        // 3. Inject script into head
-        document.head.appendChild(script);
-      } catch (err) {
-        console.error('Error injecting Adsterra script tag:', err);
-        safeResolve(true);
-      }
-
-      // 4. Short fallback timeout of 1.2 seconds to clear the loader quickly if script.onload doesn't fire
-      // (e.g. due to adblockers, tracking protection, or immediate script evaluation)
-      setTimeout(() => {
-        console.log(`Fallback timeout reached for SocialBar ad. Clearing loader.`);
-        safeResolve(true);
-      }, 1200);
-    });
+  triggerSocialBarAd(userId: string): void {
+    console.log(`Injecting Adsterra SocialBar tag in background for user: ${userId}`);
+    try {
+      const script = document.createElement('script');
+      script.src = 'https://effectivecpmnetwork.com';
+      script.async = true;
+      script.type = 'text/javascript';
+      document.head.appendChild(script);
+    } catch (err) {
+      console.error('Error injecting Adsterra script tag:', err);
+    }
   }
 };
 

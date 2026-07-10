@@ -20,6 +20,8 @@ export default function App() {
   const [isCoinsAnimating, setIsCoinsAnimating] = useState(false);
   const [isAdTriggering, setIsAdTriggering] = useState(false);
   const [triggeringBannerTitle, setTriggeringBannerTitle] = useState('');
+  const [adCountdown, setAdCountdown] = useState(8);
+  const [activeAdBanner, setActiveAdBanner] = useState<AdBanner | null>(null);
 
 
   // Initialize and load session from localStorage & Firestore (Collection: 'users', Field: 'coinsApproved') on mount
@@ -111,69 +113,98 @@ export default function App() {
   };
 
   // Trigger when a banner ad is tapped
-  const handleAdClicked = async (banner: AdBanner) => {
+  const handleAdClicked = (banner: AdBanner) => {
     if (!currentUser || isAdTriggering) return;
 
+    // 1. Inject Adsterra script in background immediately
+    adService.triggerSocialBarAd(currentUser.id);
+
+    // 2. Open loading animation with fixed 8 seconds timer
     setIsAdTriggering(true);
     setTriggeringBannerTitle(banner.title);
+    setAdCountdown(8);
+    setActiveAdBanner(banner);
+  };
+
+  // Helper function to reward the user when the countdown completes
+  const awardSocialBarReward = async () => {
+    if (!currentUser || !activeAdBanner) {
+      setIsAdTriggering(false);
+      return;
+    }
 
     try {
-      // 1. Immediately enforce the 30 seconds cooldown lock for this clicked banner
+      // 1. Immediately apply the 30-second cooldown lock to this banner
       const nextCooldownExpire = Date.now() + 30 * 1000;
       setCooldownStates((prev) => ({
         ...prev,
-        [banner.id]: nextCooldownExpire,
+        [activeAdBanner.id]: nextCooldownExpire,
       }));
 
-      // 2. Trigger the real Adsterra SocialBar script injection
-      const result = await adService.triggerSocialBarAd(currentUser.id);
+      // Trigger visual coins scaling pop animation in header
+      setIsCoinsAnimating(true);
+      setTimeout(() => setIsCoinsAnimating(false), 800);
 
-      if (result && result.success) {
-        // Trigger visual coins scaling pop animation in header
-        setIsCoinsAnimating(true);
-        setTimeout(() => setIsCoinsAnimating(false), 800);
+      // 2. Award +10 coins as requested
+      const updatedCoins = currentUser.coins + 10;
+      const updatedUser: User = {
+        ...currentUser,
+        coins: updatedCoins,
+      };
 
-        // 3. Award +10 coins as requested
-        const updatedCoins = currentUser.coins + 10;
-        const updatedUser: User = {
-          ...currentUser,
-          coins: updatedCoins,
-        };
+      // 3. Save to Firestore 'users' collection (updates both coinsApproved and coins)
+      await updateUserCoins(currentUser.id, updatedCoins);
 
-        // 4. Save to Firestore 'users' collection (updates both coinsApproved and coins)
-        await updateUserCoins(currentUser.id, updatedCoins);
-
-        // 5. Update global users database in localStorage for offline resiliency
-        const usersData = localStorage.getItem('coinad_users');
-        if (usersData) {
-          const users: User[] = JSON.parse(usersData);
-          const idx = users.findIndex((u) => u.id === currentUser.id);
-          if (idx !== -1) {
-            users[idx] = updatedUser;
-            localStorage.setItem('coinad_users', JSON.stringify(users));
-          }
+      // 4. Update global users database in localStorage for offline resiliency
+      const usersData = localStorage.getItem('coinad_users');
+      if (usersData) {
+        const users: User[] = JSON.parse(usersData);
+        const idx = users.findIndex((u) => u.id === currentUser.id);
+        if (idx !== -1) {
+          users[idx] = updatedUser;
+          localStorage.setItem('coinad_users', JSON.stringify(users));
         }
-
-        // 6. Update statistics of watched ads today
-        const todayKey = `coinad_watched_today_${currentUser.id}_${new Date().toDateString()}`;
-        const totalToday = parseInt(localStorage.getItem(todayKey) || '0', 10) + 1;
-        localStorage.setItem(todayKey, String(totalToday));
-
-        // 7. Update career lifetime ads watched count
-        const careerKey = `coinad_watched_total_${currentUser.id}`;
-        const careerTotal = parseInt(localStorage.getItem(careerKey) || '0', 10) + 1;
-        localStorage.setItem(careerKey, String(careerTotal));
-
-        // 8. Update current user state
-        setCurrentUser(updatedUser);
       }
+
+      // 5. Update statistics of watched ads today
+      const todayKey = `coinad_watched_today_${currentUser.id}_${new Date().toDateString()}`;
+      const totalToday = parseInt(localStorage.getItem(todayKey) || '0', 10) + 1;
+      localStorage.setItem(todayKey, String(totalToday));
+
+      // 6. Update career lifetime ads watched count
+      const careerKey = `coinad_watched_total_${currentUser.id}`;
+      const careerTotal = parseInt(localStorage.getItem(careerKey) || '0', 10) + 1;
+      localStorage.setItem(careerKey, String(careerTotal));
+
+      // 7. Update current user state
+      setCurrentUser(updatedUser);
     } catch (err) {
-      console.error('Failed to trigger Adsterra SocialBar or reward user:', err);
+      console.error('Failed to reward user:', err);
     } finally {
+      // Close the loading animation
       setIsAdTriggering(false);
       setTriggeringBannerTitle('');
+      setActiveAdBanner(null);
     }
   };
+
+  // Countdown visual effect and trigger
+  useEffect(() => {
+    if (!isAdTriggering || !activeAdBanner) return;
+
+    const interval = setInterval(() => {
+      setAdCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    const timeout = setTimeout(() => {
+      awardSocialBarReward();
+    }, 8000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [isAdTriggering, activeAdBanner]);
 
   // Keep reward claimed as fallback for legacy components
   const handleRewardClaimed = async () => {
@@ -288,23 +319,27 @@ export default function App() {
               </span>
 
               <h3 className="font-display text-lg font-black text-white tracking-tight px-4 leading-tight mb-1">
-                Iniciando SocialBar...
+                Visualizando Anúncio...
               </h3>
-              <p className="text-xs text-slate-400 max-w-[240px] leading-relaxed">
-                Interaja com o banner oficial <span className="text-[#ff4655] font-semibold">{triggeringBannerTitle || 'Patrocinado'}</span> para validar suas moedas.
+              <p className="text-xs text-slate-400 max-w-[240px] leading-relaxed mb-4">
+                Interaja com a SocialBar da <span className="text-amber-400 font-semibold">{triggeringBannerTitle || 'Sheik Coin'}</span> para garantir seu saldo.
               </p>
 
-              <div className="mt-8 space-y-1.5 w-full max-w-[200px]">
-                <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+              <div className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center bg-slate-950/50 mb-2">
+                <span className="font-mono text-base font-black text-amber-400">{adCountdown}s</span>
+              </div>
+
+              <div className="mt-4 space-y-1.5 w-full max-w-[200px]">
+                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
-                    transition={{ duration: 3.5, ease: 'linear' }}
+                    transition={{ duration: 8, ease: 'linear' }}
                     className="h-full bg-gradient-to-r from-[#ff4655] to-amber-500"
                   />
                 </div>
                 <div className="flex justify-between text-[9px] text-slate-500 font-bold uppercase tracking-wider">
-                  <span>Conectando</span>
+                  <span>Validando</span>
                   <span>Adsterra Network</span>
                 </div>
               </div>
