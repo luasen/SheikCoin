@@ -3,12 +3,14 @@ import { User as UserType } from '../types';
 import { Mail, Lock, User as UserIcon, Coins, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getUserByEmail, saveUser } from '../lib/firebase';
+import Footer from './Footer';
 
 interface LoginProps {
   onLoginSuccess: (user: UserType) => void;
+  onOpenPage: (page: 'privacy' | 'terms' | 'contact') => void;
 }
 
-export default function Login({ onLoginSuccess }: LoginProps) {
+export default function Login({ onLoginSuccess, onOpenPage }: LoginProps) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -267,6 +269,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </button>
         </p>
       </div>
+
+      <Footer onOpenPage={onOpenPage} />
     </div>
   );
 }

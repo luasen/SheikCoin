@@ -3,10 +3,12 @@ import { User, DiamondPurchase } from '../types';
 import { Coins, Gamepad2, ShoppingBag, ArrowRight, CheckCircle2, ShieldCheck, HelpCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { saveDiamondPurchase, updateUserCoins } from '../lib/firebase';
+import Footer from './Footer';
 
 interface DiamondStoreProps {
   user: User;
   onUserUpdate: (updatedUser: User) => void;
+  onOpenPage: (page: 'privacy' | 'terms' | 'contact') => void;
 }
 
 const DIAMOND_PACKAGES = [
@@ -16,7 +18,7 @@ const DIAMOND_PACKAGES = [
   { id: 'dimas_400', diamonds: 400, cost: 8000, color: 'from-[#ff4655] via-amber-500 to-yellow-400', badge: 'Mega Pack' },
 ];
 
-export default function DiamondStore({ user, onUserUpdate }: DiamondStoreProps) {
+export default function DiamondStore({ user, onUserUpdate, onOpenPage }: DiamondStoreProps) {
   const [playerFFId, setPlayerFFId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -263,6 +265,7 @@ export default function DiamondStore({ user, onUserUpdate }: DiamondStoreProps) 
           </p>
         </div>
 
+        <Footer onOpenPage={onOpenPage} />
       </div>
     </div>
   );

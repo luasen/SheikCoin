@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { User, AdBanner } from '../types';
 import { Coins, Sparkles, Flame, Play, Clock, ChevronRight, Trophy, BellRing, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import Footer from './Footer';
 
 interface DashboardProps {
   user: User;
   onAdClicked: (banner: AdBanner) => void;
   cooldownStates: Record<string, number>; // bannerId -> epoch timestamp when cooldown ends
+  onOpenPage: (page: 'privacy' | 'terms' | 'contact') => void;
 }
 
 const BANNERS_DATA: AdBanner[] = [
@@ -54,7 +56,7 @@ const LIVE_ANNOUNCEMENTS = [
   "Lucas V. bateu a meta diária de 10 anúncios!"
 ];
 
-export default function Dashboard({ user, onAdClicked, cooldownStates }: DashboardProps) {
+export default function Dashboard({ user, onAdClicked, cooldownStates, onOpenPage }: DashboardProps) {
   const [activeAnnouncement, setActiveAnnouncement] = useState(0);
   const [remainingCooldowns, setRemainingCooldowns] = useState<Record<string, number>>({});
   const [totalWatchedToday, setTotalWatchedToday] = useState(0);
@@ -351,6 +353,9 @@ export default function Dashboard({ user, onAdClicked, cooldownStates }: Dashboa
             );
           })}
         </div>
+        
+        {/* AdSense Optimized Legal Compliance Footer */}
+        <Footer onOpenPage={onOpenPage} />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard';
 import DiamondStore from './components/DiamondStore';
 import Profile from './components/Profile';
 import AdminPanel from './components/AdminPanel';
+import AdSenseInfoPages from './components/AdSenseInfoPages';
 import { Home, ShoppingBag, User as UserIcon, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getUserById, updateUserCoins } from './lib/firebase';
@@ -17,6 +18,7 @@ export default function App() {
   const [currentAdBanner, setCurrentAdBanner] = useState<AdBanner | null>(null);
   const [cooldownStates, setCooldownStates] = useState<Record<string, number>>({});
   const [isCoinsAnimating, setIsCoinsAnimating] = useState(false);
+  const [infoPage, setInfoPage] = useState<'privacy' | 'terms' | 'contact' | null>(null);
 
 
   // Initialize and load session from localStorage & Firestore (Collection: 'users', Field: 'coinsApproved') on mount
@@ -250,11 +252,27 @@ export default function App() {
           )}
         </AnimatePresence>
 
-
+        {/* AdSense Info Pages Overlay */}
+        <AnimatePresence>
+          {infoPage && (
+            <motion.div
+              initial={{ opacity: 0, x: 80 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 80 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="absolute inset-0 z-50"
+            >
+              <AdSenseInfoPages 
+                initialPage={infoPage} 
+                onClose={() => setInfoPage(null)} 
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Client Session Flow router */}
         {!currentUser ? (
-          <Login onLoginSuccess={handleLoginSuccess} />
+          <Login onLoginSuccess={handleLoginSuccess} onOpenPage={(page) => setInfoPage(page)} />
         ) : activeTab === 'admin' ? (
           <AdminPanel
             currentUser={currentUser}
@@ -291,6 +309,7 @@ export default function App() {
                   user={currentUser}
                   onAdClicked={handleAdClicked}
                   cooldownStates={cooldownStates}
+                  onOpenPage={(page) => setInfoPage(page)}
                 />
               )}
 
@@ -298,6 +317,7 @@ export default function App() {
                 <DiamondStore
                   user={currentUser}
                   onUserUpdate={handleUserUpdate}
+                  onOpenPage={(page) => setInfoPage(page)}
                 />
               )}
 
@@ -307,6 +327,7 @@ export default function App() {
                   onLogout={handleLogout}
                   onUserUpdate={handleUserUpdate}
                   onNavigateToAdmin={() => setActiveTab('admin')}
+                  onOpenPage={(page) => setInfoPage(page)}
                 />
               )}
             </div>

@@ -17,15 +17,17 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getDiamondPurchases } from '../lib/firebase';
+import Footer from './Footer';
 
 interface ProfileProps {
   user: User;
   onLogout: () => void;
   onUserUpdate: (updatedUser: User) => void;
   onNavigateToAdmin?: () => void;
+  onOpenPage: (page: 'privacy' | 'terms' | 'contact') => void;
 }
 
-export default function Profile({ user, onLogout, onUserUpdate, onNavigateToAdmin }: ProfileProps) {
+export default function Profile({ user, onLogout, onUserUpdate, onNavigateToAdmin, onOpenPage }: ProfileProps) {
   const [adsWatched, setAdsWatched] = useState(0);
   const [purchases, setPurchases] = useState<DiamondPurchase[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -212,7 +214,7 @@ export default function Profile({ user, onLogout, onUserUpdate, onNavigateToAdmi
       )}
 
       {/* Logout Action Button */}
-      <div className="mt-auto pt-6">
+      <div className="mt-auto pt-6 mb-4">
         <button
           onClick={onLogout}
           className="w-full bg-slate-900/60 hover:bg-red-500/10 border border-slate-800 hover:border-red-500/20 text-slate-400 hover:text-red-400 font-bold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer"
@@ -221,6 +223,8 @@ export default function Profile({ user, onLogout, onUserUpdate, onNavigateToAdmi
           <span>Sair da Conta</span>
         </button>
       </div>
+
+      <Footer onOpenPage={onOpenPage} />
     </div>
   );
 }
