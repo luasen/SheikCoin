@@ -8,6 +8,7 @@ import DiamondStore from './components/DiamondStore';
 import Profile from './components/Profile';
 import AdminPanel from './components/AdminPanel';
 import AdSenseInfoPages from './components/AdSenseInfoPages';
+import AdsterraSocialBar from './components/AdsterraSocialBar';
 import { Home, ShoppingBag, User as UserIcon, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getUserById, updateUserCoins } from './lib/firebase';
@@ -229,6 +230,7 @@ export default function App() {
 
   return (
     <MobileFrame>
+      <AdsterraSocialBar />
       {/* Absolute positioning relative to Mobile viewport */}
       <div className="w-full h-full flex flex-col relative overflow-hidden bg-[#0a0d14]">
         

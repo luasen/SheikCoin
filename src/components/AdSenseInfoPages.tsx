@@ -154,26 +154,26 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
             <div className="space-y-3">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>1. Uso do Google AdSense</span>
+                <span>1. Uso do AdsTerra Social Bar</span>
               </h2>
               <p className="text-xs leading-relaxed text-slate-400">
-                Nós utilizamos a rede oficial de publicidade <span className="text-white font-semibold">Google AdSense</span> para exibir anúncios aos nossos usuários enquanto utilizam a plataforma. 
+                Nós utilizamos a rede oficial de publicidade <span className="text-white font-semibold">AdsTerra Social Bar</span> para exibir anúncios aos nossos usuários enquanto utilizam a plataforma. 
               </p>
               <p className="text-xs leading-relaxed text-slate-400">
-                O Google AdSense utiliza tecnologias avançadas e cookies para selecionar e personalizar os anúncios com base nas preferências e interesses de cada visitante. Estes anúncios são fornecidos diretamente pelos servidores do Google de forma transparente e segura.
+                A AdsTerra utiliza tecnologias avançadas para selecionar e exibir anúncios relevantes com base no contexto de navegação. Estes anúncios são fornecidos diretamente pelos servidores da AdsTerra de forma transparente e segura.
               </p>
             </div>
 
             <div className="space-y-3">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>2. Cookies e Arquivos de Log</span>
+                <span>2. Cookies e Identificadores</span>
               </h2>
               <p className="text-xs leading-relaxed text-slate-400">
-                O Google, como fornecedor terceiro, utiliza cookies para veicular anúncios no site Sheik Coin. O uso de cookies de publicidade (como o cookie DoubleClick) pelo Google permite que ele e seus parceiros veiculem anúncios para nossos usuários com base em suas visitas ao nosso site e/ou a outros sites na Internet.
+                A AdsTerra, como fornecedora parceira, utiliza cookies e identificadores de navegador para veicular anúncios apropriados no site Sheik Coin. O uso dessas ferramentas permite otimizar a experiência do usuário e veicular anúncios apropriados aos nossos visitantes.
               </p>
               <p className="text-xs leading-relaxed text-slate-400">
-                Os usuários podem optar por desativar os anúncios personalizados visitando as <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">Configurações de Anúncios do Google</a> ou, alternativamente, desabilitar cookies de terceiros no próprio navegador de internet.
+                Os usuários podem optar por gerenciar e desativar cookies personalizados ajustando as preferências de privacidade diretamente no próprio navegador de internet.
               </p>
             </div>
 
@@ -208,7 +208,7 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
               <div className="space-y-1">
                 <h4 className="text-xs font-bold text-white">Ambiente Seguro e Confiável</h4>
                 <p className="text-[10px] text-slate-500 leading-normal">
-                  Este documento segue estritamente as diretrizes da LGPD (Lei Geral de Proteção de Dados) e as políticas de conformidade do programa Google AdSense.
+                  Este documento segue estritamente as diretrizes da LGPD (Lei Geral de Proteção de Dados) e as políticas de conformidade do programa AdsTerra.
                 </p>
               </div>
             </div>
@@ -254,7 +254,7 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
                 <span>2. Utilização Legal da Plataforma</span>
               </h2>
               <p className="text-xs leading-relaxed text-slate-400">
-                Os usuários devem utilizar a plataforma Sheik Coin estritamente de forma pessoal, recreativa e em total conformidade com a legislação local. O sistema funciona como um hub de visualização de conteúdo publicitário (via Google AdSense) com trocas de saldo em Coins virtuais por itens cosméticos digitais e diamantes Free Fire.
+                Os usuários devem utilizar a plataforma Sheik Coin estritamente de forma pessoal, recreativa e em total conformidade com a legislação local. O sistema funciona como um hub de visualização de conteúdo publicitário (via AdsTerra) com trocas de saldo em Coins virtuais por itens cosméticos digitais e diamantes Free Fire.
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
                 <span>3. Tolerância Zero a Fraudes e Manipulação</span>
               </h2>
               <p className="text-xs leading-relaxed text-slate-400">
-                Para garantir a integridade do ecossistema e a qualidade do tráfego enviado aos nossos anunciantes do Google AdSense, a utilização de métodos automatizados é expressamente proibida.
+                Para garantir a integridade do ecossistema e a qualidade do tráfego enviado aos nossos anunciantes parceiros da AdsTerra, a utilização de métodos automatizados é expressamente proibida.
               </p>
               <div className="p-3 bg-red-500/5 border border-red-500/10 rounded-xl space-y-1.5">
                 <p className="text-[11px] text-red-400 font-bold flex items-center gap-1.5">
@@ -288,7 +288,7 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
                 <span>4. Modificações e Alterações do Serviço</span>
               </h2>
               <p className="text-xs leading-relaxed text-slate-400">
-                O Sheik Coin reserva-se o direito de, a qualquer momento e sem aviso prévio, alterar as regras de recompensa, a proporção de conversão de moedas (Coins), os pacotes de diamantes disponíveis na Lojinha, ou suspender temporariamente recursos do site para manutenção técnica ou adequações legais perante o Google AdSense.
+                O Sheik Coin reserva-se o direito de, a qualquer momento e sem aviso prévio, alterar as regras de recompensa, a proporção de conversão de moedas (Coins), os pacotes de diamantes disponíveis na Lojinha, ou suspender temporariamente recursos do site para manutenção técnica ou adequações legais perante a AdsTerra.
               </p>
             </div>
 
@@ -452,7 +452,7 @@ export default function AdSenseInfoPages({ initialPage, onClose }: AdSenseInfoPa
               <span className="text-[9px] uppercase tracking-wider font-extrabold text-slate-500">E-mail Corporativo Direto</span>
               <p className="text-xs font-bold text-amber-400 font-mono">contato@sheikcoin.site</p>
               <p className="text-[10px] text-slate-500 mt-0.5">
-                Para assuntos de parcerias com mídias ou questões de auditoria do Google AdSense, envie um e-mail diretamente.
+                Para assuntos de parcerias com mídias ou questões de auditoria do AdsTerra, envie um e-mail diretamente.
               </p>
             </div>
           </motion.div>

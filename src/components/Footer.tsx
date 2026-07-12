@@ -12,7 +12,7 @@ export default function Footer({ onOpenPage }: FooterProps) {
     <footer className="mt-8 pt-6 pb-4 px-5 border-t border-slate-900/80 bg-slate-950/40 select-none">
       <div className="flex flex-col items-center text-center space-y-4">
         
-        {/* AdSense Verification Badge / Clean UI indicator */}
+        {/* AdsTerra Verification Badge / Clean UI indicator */}
         <div className="flex items-center gap-1.5 bg-[#0d111a] px-3 py-1 rounded-full border border-slate-800 text-[10px] text-slate-500 font-medium">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span>Plataforma Segura e Auditada</span>
@@ -56,7 +56,7 @@ export default function Footer({ onOpenPage }: FooterProps) {
           <p className="text-[9px] text-slate-600 flex items-center justify-center gap-1">
             <span>Desenvolvido com</span>
             <Heart className="w-2.5 h-2.5 text-[#ff4655] fill-[#ff4655]" />
-            <span>• Otimizado para Hostinger e Google AdSense</span>
+            <span>• Otimizado para Hostinger e AdsTerra</span>
           </p>
         </div>
 

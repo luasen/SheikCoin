@@ -100,16 +100,6 @@ export default function Dashboard({ user, onAdClicked, cooldownStates, onOpenPag
     return () => clearInterval(interval);
   }, [cooldownStates]);
 
-  // Safely trigger Google AdSense responsive ad push
-  useEffect(() => {
-    try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.log('AdSense layout push triggered');
-    }
-  }, []);
-
   const handleBannerAction = (banner: AdBanner) => {
     // If banner is on cooldown, do nothing
     if (remainingCooldowns[banner.id]) return;
@@ -239,32 +229,6 @@ export default function Dashboard({ user, onAdClicked, cooldownStates, onOpenPag
           </div>
         </div>
 
-        {/* Google AdSense Official Banner Placement */}
-        <div className="p-3 bg-gradient-to-br from-[#0d111a] to-[#121622] rounded-2xl border border-slate-800/80 flex flex-col gap-3 px-4 shadow-lg select-none">
-          <div className="w-full flex items-center justify-between">
-            <div className="text-left">
-              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                PATROCINADO PELO GOOGLE
-              </span>
-              <p className="text-[11px] text-slate-400 font-medium mt-1 leading-tight">
-                Anúncio oficial integrado via Google AdSense
-              </p>
-            </div>
-            <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-900 border border-slate-800/50 px-2 py-0.5 rounded">
-              AdSense Unit
-            </span>
-          </div>
-          
-          <div className="w-full flex justify-center bg-slate-950/40 p-1.5 rounded-xl border border-slate-900/50">
-            <ins className="adsbygoogle"
-                 style={{ display: 'block', width: '100%', minHeight: '50px' }}
-                 data-ad-client="ca-pub-8355170330758219"
-                 data-ad-slot="9999999999"
-                 data-ad-format="horizontal"
-                 data-full-width-responsive="true"></ins>
-          </div>
-        </div>
-
         {/* Interactive action header */}
         <div className="pt-2">
           <h2 className="font-display text-base font-bold text-white flex items-center gap-1.5">
@@ -354,7 +318,7 @@ export default function Dashboard({ user, onAdClicked, cooldownStates, onOpenPag
           })}
         </div>
         
-        {/* AdSense Optimized Legal Compliance Footer */}
+        {/* AdsTerra Legal Compliance Footer */}
         <Footer onOpenPage={onOpenPage} />
       </div>
     </div>
