@@ -181,7 +181,16 @@ export default function AdPlayer({ userId, bannerTitle, onRewardClaimed, onClose
               </div>
 
               {/* Big interactive/visual element in the center */}
-              <div className="z-10 flex flex-col items-center justify-center my-4">
+              <div 
+                onClick={() => {
+                  try {
+                    window.open('https://pl30338015.effectivecpmnetwork.com/2b50d77505616c526a039c5e752af95d', '_blank', 'noopener,noreferrer');
+                  } catch (e) {
+                    console.error('Failed to open AdsTerra ad:', e);
+                  }
+                }}
+                className="z-10 flex flex-col items-center justify-center my-4 cursor-pointer active:scale-[0.98] transition-all"
+              >
                 <motion.div
                   animate={{
                     scale: [1, 1.08, 1],
@@ -210,13 +219,20 @@ export default function AdPlayer({ userId, bannerTitle, onRewardClaimed, onClose
               <div className="w-full z-10 flex flex-col items-center">
                 <button
                   type="button"
-                  className={`w-full max-w-[240px] bg-white text-indigo-900 font-extrabold text-sm py-3.5 rounded-xl shadow-lg active:scale-95 transition-all text-center flex items-center justify-center gap-2 border-2 border-white`}
+                  onClick={() => {
+                    try {
+                      window.open('https://pl30338015.effectivecpmnetwork.com/2b50d77505616c526a039c5e752af95d', '_blank', 'noopener,noreferrer');
+                    } catch (e) {
+                      console.error('Failed to open AdsTerra ad:', e);
+                    }
+                  }}
+                  className="w-full max-w-[240px] bg-white text-indigo-900 font-extrabold text-sm py-3.5 rounded-xl shadow-lg active:scale-95 transition-all text-center flex items-center justify-center gap-2 border-2 border-white cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-indigo-900" />
                   <span>{currentGraphic.buttonText}</span>
                 </button>
                 <span className="text-[9px] text-white/60 mt-2 font-medium">
-                  Patrocinado por {currentGraphic.sponsor || "Google Partners"}
+                  Patrocinado por {currentGraphic.sponsor || "AdsTerra Partners"}
                 </span>
               </div>
             </motion.div>

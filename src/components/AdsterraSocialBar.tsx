@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 export default function AdsterraSocialBar() {
   useEffect(() => {
-    const scriptSrc = 'https://pl30303020.effectivecpmnetwork.com/f4/38/5b/f4385b9ca752c1aaf812ae0cef5852c5.js';
+    const scriptSrc = 'https://pl30338015.effectivecpmnetwork.com/2b/50/d7/2b50d77505616c526a039c5e752af95d.js';
     
     // Check if the script is already present to prevent duplicate injection
     const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);

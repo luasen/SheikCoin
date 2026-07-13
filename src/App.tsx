@@ -113,55 +113,9 @@ export default function App() {
   // Trigger when a banner ad is tapped
   const handleAdClicked = async (banner: AdBanner) => {
     if (!currentUser) return;
-
-    // 1. Immediately apply the 30-second cooldown lock to this specific banner on click
-    const nextCooldownExpire = Date.now() + 30 * 1000;
-    setCooldownStates((prev) => ({
-      ...prev,
-      [banner.id]: nextCooldownExpire,
-    }));
-
-    // Trigger visual coins scaling pop animation in header
-    setIsCoinsAnimating(true);
-    setTimeout(() => setIsCoinsAnimating(false), 800);
-
-    try {
-      // 3. Instant reward of +10 coins as requested
-      const updatedCoins = currentUser.coins + 10;
-      const updatedUser: User = {
-        ...currentUser,
-        coins: updatedCoins,
-      };
-
-      // 4. Save to Firestore 'users' collection (updates both coinsApproved and coins)
-      await updateUserCoins(currentUser.id, updatedCoins);
-
-      // 5. Update global users database in localStorage for offline resiliency
-      const usersData = localStorage.getItem('coinad_users');
-      if (usersData) {
-        const users: User[] = JSON.parse(usersData);
-        const idx = users.findIndex((u) => u.id === currentUser.id);
-        if (idx !== -1) {
-          users[idx] = updatedUser;
-          localStorage.setItem('coinad_users', JSON.stringify(users));
-        }
-      }
-
-      // 6. Update statistics of watched ads today
-      const todayKey = `coinad_watched_today_${currentUser.id}_${new Date().toDateString()}`;
-      const totalToday = parseInt(localStorage.getItem(todayKey) || '0', 10) + 1;
-      localStorage.setItem(todayKey, String(totalToday));
-
-      // 7. Update career lifetime ads watched count
-      const careerKey = `coinad_watched_total_${currentUser.id}`;
-      const careerTotal = parseInt(localStorage.getItem(careerKey) || '0', 10) + 1;
-      localStorage.setItem(careerKey, String(careerTotal));
-
-      // 8. Update current user state
-      setCurrentUser(updatedUser);
-    } catch (err) {
-      console.error('Failed to reward user:', err);
-    }
+    
+    // Set the current ad banner to trigger the AdPlayer popup modal inside the app
+    setCurrentAdBanner(banner);
   };
 
   // Keep reward claimed as fallback for legacy components
